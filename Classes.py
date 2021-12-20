@@ -60,7 +60,7 @@ class Edge:
         self.src = src
         self.dst = dst
         self.weight = w
-        self.tag = 0
+        self.tag = dst
 
 class Path:
     def __init__(self):
@@ -104,6 +104,23 @@ class Vertecies:
         self.freeMemmory.insert(0, t)
         self.size -=1
 
+    def get(self, key):
+        if key < 0 or key > len(self.nodes):
+            return None
+
+        return self.nodes[key]
+
+    def getItr(self):
+        return iter(self.nodes)
+
+    def getFirst(self):
+        i = 0
+        while i < len(self.nodes):
+            if self.nodes[i] is not None:
+                return self.nodes[i]
+
+        return None
+
 class Edges:
     def __init__(self):
         self.edges = []
@@ -113,8 +130,20 @@ class Edges:
         self.edges[edge.src].add(edge)
         self.size +=1
 
-    def rmeove(self, edge):
-        self.edges[edge.src].remove(edge.dst)
+    def rmeove(self, src, dst):
+        if len(self.edges) >= src:
+            return
+
+        return self.edges[src].remove(dst)
+
+    def getItr(self):
+        return iter(self.edges)
+
+    def getItr(self, src):
+        if self.edges[src] is None:
+            return None
+
+        return iter(self.edges[src])
 
 class Graph:
     def __init__(self):
@@ -124,6 +153,67 @@ class Graph:
     def add(self, node):
         self.vertecies.addNode(node)
 
+    def getNode(self, key):
+        return self.vertecies.g
+
     def connect(self, src, dst, w):
-        Edges.addEdge(Edge(src, src, dst))
+        Edges.addEdge(Edge(src, dst, w))
+
+    def NodeNum(self):
+        return self.vertecies.size
+
+    def EdgeNum(self):
+        return self.edges.size
+
+    def remove(self, id):
+        return self.vertecies.removeNode(id)
+
+    def disConnect(self, src, dst):
+        self.edges.rmeove(src, dst)
+
+    def getNodesItr(self):
+        return self.vertecies.getItr()
+
+    def getEdgesOf(self, src):
+        return self.edges.getItr(src)
+
+    def getEdgesItr(self):
+        return self.edges.getItr()
+
+    def isConnected(self):
+        return self.DFS() and self.transpose().DFS()
+
+    def transpose(self):
+        g = Graph()
+        it = self.getNodesItr()
+
+        for node in it:
+            g.add(node)
+
+        it = self.getEdgesItr()
+        for edge in it:
+            g.connect(edge.src, edge.dst, edge.weight)
+
+    def DFS(self):
+        if self.NodeNum() < 2:
+            return True
+
+        stack = [self.vertecies.getFirst()]
+        nodesReached = 0
+
+        while len(stack) > 0:
+            node = stack.pop(0)
+            nodesReached +=1
+
+            if node.tag != 1:
+                it = self.getEdgesOf(node.key)
+                for edge in it:
+                    stack.insert(0, self.getNode(edge.dst))
+
+            node.tag = 1
+
+        return nodesReached == self.NodeNum()
+
+
+
 
