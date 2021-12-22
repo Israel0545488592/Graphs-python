@@ -1,32 +1,13 @@
+import json
 import math
 
-class TagMap:
-    def __init__(self):
-        self.values = []
-        self.freeMemory = [0]
 
-    def get(self, tag):
-        if tag < 0 or tag > len(self.values):
-            return None
-        return self.values
+def ListToDict(lst):
+    res_dct = {lst[i]: lst[i + 1] for i in range(0, len(lst), 2)}
+    return res_dct
 
-    def add(self, val):
-        val.tag = self.freeMemmory[0]
-        self.freeMemmory.pop(0)
-        if len(self.freeMemmory) == 0:
-            self.freeMemmory.insert(0, len(self.values))
-            self.nodes.append(val)
-        else:
-            self.values.insert(val.tag, val)
 
-    def remove(self, tag):
-        t = self.values[tag]
-        self.values[tag] = None
-        self.freeMemmory.insert(0, t.tag)
-
-        return t
-
-class DistMap( TagMap):
+class TagHeap:
 
     def __init__(self, leangth):
         self.min = -1
@@ -34,7 +15,7 @@ class DistMap( TagMap):
 
     def getMin(self):
         if self.min == -1:
-            return  None
+            return None
         else:
             return self.values[self.min]
 
@@ -44,9 +25,11 @@ class DistMap( TagMap):
             if val < self.getMin():
                 self.min = val
 
+
 class Geolocation:
     def __init__(self, x, y, z):
-        self.x = x; self.y = y, self.z = z;
+        self.x = x; self.y = y; self.z = z
+
 
 class Node:
     def __init__(self, id, loc):
@@ -61,6 +44,7 @@ class Edge:
         self.dst = dst
         self.weight = w
         self.tag = dst
+
 
 class Path:
     def __init__(self):
@@ -79,106 +63,45 @@ class Path:
         self.weight -= t.weight
 
 
-class Vertecies:
-    def __init__(self):
-        self.nodes = []
-        self.freeMemmory = [0]
-        self.size = 0
-
-    def addNode(self, node):
-        m = "node " + node.key
-
-        node.key = self.freeMemmory[0]
-        self.freeMemmory.pop(0)
-        if len(self.freeMemmory) == 0:
-            self.freeMemmory.insert(0, len(self.nodes))
-
-        self.nodes.append(node)
-        print(m + "is now " + node.key)
-
-        self.size +=1
-
-    def removeNode(self, id):
-        t = self.values[id]
-        self.values[id] = None
-        self.freeMemmory.insert(0, t)
-        self.size -=1
-
-    def get(self, key):
-        if key < 0 or key > len(self.nodes):
-            return None
-
-        return self.nodes[key]
-
-    def getItr(self):
-        return iter(self.nodes)
-
-    def getFirst(self):
-        i = 0
-        while i < len(self.nodes):
-            if self.nodes[i] is not None:
-                return self.nodes[i]
-
-        return None
-
-class Edges:
-    def __init__(self):
-        self.edges = []
-        self.size = 0
-
-    def addEdge(self, edge):
-        self.edges[edge.src].add(edge)
-        self.size +=1
-
-    def rmeove(self, src, dst):
-        if len(self.edges) >= src:
-            return
-
-        return self.edges[src].remove(dst)
-
-    def getItr(self):
-        return iter(self.edges)
-
-    def getItr(self, src):
-        if self.edges[src] is None:
-            return None
-
-        return iter(self.edges[src])
-
 class Graph:
-    def __init__(self):
-        self.vertecies = Vertecies()
-        self.edges = Edges()
+    def __init__(self) -> None:
+        self.nodes = {}
+        self.edges = {}
 
     def add(self, node):
-        self.vertecies.addNode(node)
+        self.nodes[node.key] = node
+        self.edges[node.key] = {}
 
-    def getNode(self, key):
-        return self.vertecies.g
+    def connect(self, src, dest, w):
+        if src in self.nodes.keys() and dest in self.nodes.keys():
+            self.edges[src][dest] = w
 
-    def connect(self, src, dst, w):
-        Edges.addEdge(Edge(src, dst, w))
+    def save_to_json(self, file):
+        with open(file, 'w') as f:
+            json.dump(self, indent=2, fp=f, default=lambda a: a.__dict__)
+
+    def load_from_json(self, file):
+        dict = {}
+
+        with open(file, "r") as f:
+            dict = json.load(f)
+
+        for n in dict["nodes"].values():
+            self.add_node(n["id"], (n['pos']['x'], n['pos']['y']))
+
+        for src, out in dict["edges"].items():
+            for dest, w in out.items():
+                print(src, dest, w)
+                self.connect(int(src), int(dest), w)
+
+    def __str__(self) -> str:
+        return f"nodes: {self.nodes}\nedges: {self.edges}"
+
+    def NodeIter(self):
+        return iter(self.nodes)
 
     def NodeNum(self):
-        return self.vertecies.size
-
-    def EdgeNum(self):
-        return self.edges.size
-
-    def remove(self, id):
-        return self.vertecies.removeNode(id)
-
-    def disConnect(self, src, dst):
-        self.edges.rmeove(src, dst)
-
-    def getNodesItr(self):
-        return self.vertecies.getItr()
-
-    def getEdgesOf(self, src):
-        return self.edges.getItr(src)
-
-    def getEdgesItr(self):
-        return self.edges.getItr()
+        return len(self.nodes)
 
     def isConnected(self):
         return self.DFS() and self.transpose().DFS()
@@ -190,15 +113,18 @@ class Graph:
         for node in it:
             g.add(node)
 
-        it = self.getEdgesItr()
-        for edge in it:
-            g.connect(edge.src, edge.dst, edge.weight)
+            edges = self.edges[node.key]
+
+            for dst in edges.keys():
+                g.connect(node.key, dst, edges[dst])
 
     def DFS(self):
         if self.NodeNum() < 2:
             return True
 
-        stack = [self.vertecies.getFirst()]
+        self.cleerTags()
+
+        stack = [iter(self.nodes).__next__()]
         nodesReached = 0
 
         while len(stack) > 0:
@@ -206,14 +132,16 @@ class Graph:
             nodesReached +=1
 
             if node.tag != 1:
-                it = self.getEdgesOf(node.key)
-                for edge in it:
-                    stack.insert(0, self.getNode(edge.dst))
+                edges = self.edges[node.key]
+                for edge in edges.keys:
+                    stack.insert(0, self.nodes[edge])
 
             node.tag = 1
 
         return nodesReached == self.NodeNum()
 
-
-
-
+    def clearTags(self):
+        it = self.getNodesItr()
+        for node in it:
+            if node is not None:
+                node.tag = 0
