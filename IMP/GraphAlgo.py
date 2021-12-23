@@ -1,7 +1,7 @@
 import json
 import math
 
-from Classes import GraphInterface, Path, TagHeap
+from IMP.Classes import GraphInterface, Path, TagHeap
 
 
 class GraphAlgoInterface:

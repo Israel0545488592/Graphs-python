@@ -1,6 +1,3 @@
-import  Classes
-
-
 def check():
     """
     Graph: |V|=4 , |E|=5

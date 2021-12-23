@@ -1,6 +1,7 @@
 from typing import List
 
-import GraphInterface
+from API import GraphInterface
+
 
 class GraphAlgoInterface:
     """This abstract class represents an interface of a graph."""
