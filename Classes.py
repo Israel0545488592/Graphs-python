@@ -9,9 +9,9 @@ def ListToDict(lst):
 
 class TagHeap:
 
-    def __init__(self, leangth):
+    def __init__(self, size):
         self.min = -1
-        self.values = [math.inf] * leangth
+        self.values = [math.inf] * size
 
     def getMin(self):
         if self.min == -1:
@@ -19,31 +19,27 @@ class TagHeap:
         else:
             return self.values[self.min]
 
+    def get(self, ind):
+        return self.values[ind]
+
     def relax(self, val, ind):
+
         if self.values[ind] > val:
             self.values[ind] = val
+
             if val < self.getMin():
                 self.min = val
 
+            return True
 
-class Geolocation:
-    def __init__(self, x, y, z):
-        self.x = x; self.y = y; self.z = z
+        return False
 
 
 class Node:
-    def __init__(self, id, loc):
+    def __init__(self, id, loc : tuple):
         self.key = id
         self.tag = 0
-        self.geolocation = loc
-
-
-class Edge:
-    def __init__(self, src, dst, w):
-        self.src = src
-        self.dst = dst
-        self.weight = w
-        self.tag = dst
+        self.loc = loc
 
 
 class Path:
@@ -63,85 +59,60 @@ class Path:
         self.weight -= t.weight
 
 
-class Graph:
+class GraphInterface:
     def __init__(self) -> None:
         self.nodes = {}
         self.edges = {}
+        self.mc = 0
 
-    def add(self, node):
+    def add_node(self, node):
         self.nodes[node.key] = node
         self.edges[node.key] = {}
+        self.mc +=1
 
-    def connect(self, src, dest, w):
+    def add_edge(self, src, dest, w):
         if src in self.nodes.keys() and dest in self.nodes.keys():
             self.edges[src][dest] = w
+            self.mc += 1
 
-    def save_to_json(self, file):
-        with open(file, 'w') as f:
-            json.dump(self, indent=2, fp=f, default=lambda a: a.__dict__)
+    def remove_node(self, id):
+        if id in self.nodes.keys():
+            self.nodes.pop(id)
+            self.edges.pop(id)
+            self.mc +=1
+            return True
 
-    def load_from_json(self, file):
-        dict = {}
+        return False
 
-        with open(file, "r") as f:
-            dict = json.load(f)
+    def remove_edge(self, src, dst):
+        if src in self.edges:
+            if dst in self.edges[src]:
+                self.edges[src].pop(dst)
+                self.mc +=1
+                return True
 
-        for n in dict["nodes"].values():
-            self.add_node(n["id"], (n['pos']['x'], n['pos']['y']))
-
-        for src, out in dict["edges"].items():
-            for dest, w in out.items():
-                print(src, dest, w)
-                self.connect(int(src), int(dest), w)
+        return False
 
     def __str__(self) -> str:
         return f"nodes: {self.nodes}\nedges: {self.edges}"
 
-    def NodeIter(self):
-        return iter(self.nodes)
-
-    def NodeNum(self):
+    def v_size(self):
         return len(self.nodes)
 
-    def isConnected(self):
-        return self.DFS() and self.transpose().DFS()
+    def e_size(self):
+        sum = 0
+        for dsts in self.edges:
+            sum += len(dsts)
+        return sum
 
-    def transpose(self):
-        g = Graph()
-        it = self.getNodesItr()
+    def get_all_v(self):
+        return self.nodes
 
-        for node in it:
-            g.add(node)
+    def all_out_edges_of_node(self, id):
+        return self.edges[id]
 
-            edges = self.edges[node.key]
+    def all_in_edges_of_node(self, id):
+        {src : src[id] for src in self.edges if id in src}
 
-            for dst in edges.keys():
-                g.connect(node.key, dst, edges[dst])
-
-    def DFS(self):
-        if self.NodeNum() < 2:
-            return True
-
-        self.cleerTags()
-
-        stack = [iter(self.nodes).__next__()]
-        nodesReached = 0
-
-        while len(stack) > 0:
-            node = stack.pop(0)
-            nodesReached +=1
-
-            if node.tag != 1:
-                edges = self.edges[node.key]
-                for edge in edges.keys:
-                    stack.insert(0, self.nodes[edge])
-
-            node.tag = 1
-
-        return nodesReached == self.NodeNum()
-
-    def clearTags(self):
-        it = self.getNodesItr()
-        for node in it:
-            if node is not None:
-                node.tag = 0
+    def get_mc(self):
+        return self.mc
