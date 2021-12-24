@@ -4,6 +4,16 @@ import math
 from IMP.Classes import GraphInterface, Path, TagHeap
 
 
+def permutator(elements):
+    if len(elements) <= 1:
+        yield elements
+
+    else:
+        for perm in permutator(elements[1:]):
+            for i in range(len(elements)):
+                yield perm[:i] + elements[0:1] + perm[i:]
+
+
 class GraphAlgoInterface:
 
     def __init__(self, G: GraphInterface):
@@ -46,13 +56,16 @@ class GraphAlgoInterface:
             if node is not None:
                 node.tag = 0
 
+    def ArbitraryNode(self):
+        return iter(self.graph.nodes).__next__()
+
     def DFS(self):
         if self.graph.v_size() < 2:
             return True
 
         self.clearTags()
 
-        stack = [iter(self.graph.nodes).__next__()]
+        stack = self.ArbitraryNode()
         nodesReached = 0
 
         while len(stack) > 0:
@@ -80,7 +93,7 @@ class GraphAlgoInterface:
         prevs = [node.key for node in self.graph.nodes.values()]
         dists = TagHeap(self.graph.v_size())
         dists.min = src
-        dists[src] = 0
+        dists.values[src] = 0
         finished = False
 
         while not finished:
@@ -93,7 +106,7 @@ class GraphAlgoInterface:
                 if change:
                     prevs[edge] = dists.min
 
-        if dists[dst] == math.inf:
+        if dists.get(dst) == math.inf:
             return None
 
         path = Path()
@@ -103,7 +116,53 @@ class GraphAlgoInterface:
             curr = prevs[curr]
         path.add(src)
 
-        return path
+        return path, dists
 
     def shortest_path(self, src, dst):
-        return self.dijkstra(src, dst)
+        path, dists = self.dijkstra(src, dst)
+        return path
+
+    def centerPoint(self):
+
+        if self.graph.v_size() == 0:
+            return None
+
+        ind = self.ArbitraryNode().key
+        minMax = math.inf
+
+        if not self.isConnected():
+            return tuple(ind, minMax)
+
+        it = self.graph.get_all_v().keys()
+        for node in it:
+
+            path, dists = self.dijkstra()
+            Max = max(dists)
+
+            if Max < minMax:
+                minMax = Max
+                ind = node
+
+        return tuple(ind, minMax)
+
+    def TSP(self, destinations):
+        if len(destinations) < 2:
+            return destinations
+
+        # trying all possible options before giving up
+        rout = Path()
+        possible = True
+        for perm in permutator(list(range(len(destinations)))):
+
+            i = 0
+            while i < len(perm) + 1:
+                path, dists = self.dijkstra(destinations[perm[i]], destinations[perm[i + 1]])
+
+                if path is not None and dists is not math.inf:
+                    rout.merge(path)
+                else:
+                    possible = False
+                    continue
+
+        if possible:
+            return tuple(rout.rout, rout.weight)

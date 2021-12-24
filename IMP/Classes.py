@@ -57,6 +57,10 @@ class Path:
         t = self.rout.pop(0)
         self.weight -= t.weight
 
+    def merge(self, p):
+        while len(p.rout) > 0:
+            self.rout.append(p.rout.remove())
+
 
 class GraphInterface:
     def __init__(self) -> None:
@@ -111,7 +115,7 @@ class GraphInterface:
         return self.edges[id]
 
     def all_in_edges_of_node(self, id):
-        {src : src[id] for src in self.edges if id in src}
+        return {src : src[id] for src in self.edges if id in src}
 
     def get_mc(self):
         return self.mc
