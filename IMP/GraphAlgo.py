@@ -1,7 +1,7 @@
 import json
 import math
 
-from IMP.Classes import GraphInterface, Path, TagHeap
+from IMP.Classes import DiGraph, Path, TagHeap
 
 
 def permutator(elements):
@@ -14,9 +14,9 @@ def permutator(elements):
                 yield perm[:i] + elements[0:1] + perm[i:]
 
 
-class GraphAlgoInterface:
+class GraphAlgo:
 
-    def __init__(self, G: GraphInterface):
+    def __init__(self, G: DiGraph):
         self.graph = G
 
     def save_to_json(self, file):
@@ -41,7 +41,7 @@ class GraphAlgoInterface:
         return self.DFS() and self.transpose().DFS()
 
     def transpose(self):
-        g = GraphInterface()
+        g = DiGraph()
 
         for node in self.graph.nodes:
             g.add_node(node)
@@ -52,7 +52,7 @@ class GraphAlgoInterface:
                 g.add_edge(node.key, dst, edges[dst])
 
     def clearTags(self):
-        for node in self.graph.nodes:
+        for node in self.graph.nodes.values():
             if node is not None:
                 node.tag = 0
 
@@ -82,7 +82,7 @@ class GraphAlgoInterface:
         return nodesReached == self.graph.v_size()
 
     def dijkstra(self, src, dst):
-        if not (self.graph.nodes[src] & self.graph.nodes[dst]):
+        if not (self.graph.nodes[src] and self.graph.nodes[dst]):
             return None
 
         if src == dst:
@@ -91,7 +91,7 @@ class GraphAlgoInterface:
         self.clearTags()
 
         prevs = [node.key for node in self.graph.nodes.values()]
-        dists = TagHeap(self.graph.v_size())
+        dists = TagHeap(self.graph.v_size(), self.graph)
         dists.min = src
         dists.values[src] = 0
         finished = False
@@ -99,17 +99,25 @@ class GraphAlgoInterface:
         while not finished:
             edges = self.graph.edges[dists.min]
 
-            for edge in edges.keys:
-                change = not dists.relax(dists.get(edge), dists.getMin() + edges[edge])
-                finished = finished or change
+            change = False
+            curr = dists.min
+            for edge in edges.keys():
+                change = change or dists.relax(dists.get(curr) + edges[edge], edge)
 
                 if change:
-                    prevs[edge] = dists.min
+                    prevs[edge] = curr
+
+            dists.updateChosen(curr)
+            if dists.min == -1:
+                break
+
+            if not change:
+                finished = True
 
         if dists.get(dst) == math.inf:
             return None
 
-        path = Path()
+        path = Path(self.graph)
         curr = dst
         while curr is not src:
             path.add(curr)
@@ -159,10 +167,13 @@ class GraphAlgoInterface:
                 path, dists = self.dijkstra(destinations[perm[i]], destinations[perm[i + 1]])
 
                 if path is not None and dists is not math.inf:
+                    rout.remove(last = True)
                     rout.merge(path)
                 else:
                     possible = False
-                    continue
+                    break
+
+                i +=2
 
         if possible:
             return tuple(rout.rout, rout.weight)

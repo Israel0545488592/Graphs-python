@@ -6,34 +6,6 @@ def ListToDict(lst):
     return res_dct
 
 
-class TagHeap:
-
-    def __init__(self, size):
-        self.min = -1
-        self.values = [math.inf] * size
-
-    def getMin(self):
-        if self.min == -1:
-            return None
-        else:
-            return self.values[self.min]
-
-    def get(self, ind):
-        return self.values[ind]
-
-    def relax(self, val, ind):
-
-        if self.values[ind] > val:
-            self.values[ind] = val
-
-            if val < self.getMin():
-                self.min = val
-
-            return True
-
-        return False
-
-
 class Node:
     def __init__(self, id, loc : tuple):
         self.key = id
@@ -41,34 +13,15 @@ class Node:
         self.loc = loc
 
 
-class Path:
-    def __init__(self):
-        self.rout = []
-        self.weight = 0
-
-    def getLeangth(self):
-        return len(self.rout)
-
-    def add(self, edge):
-        self.rout.insert(0, edge)
-        self.weight += edge.weight
-
-    def remove(self):
-        t = self.rout.pop(0)
-        self.weight -= t.weight
-
-    def merge(self, p):
-        while len(p.rout) > 0:
-            self.rout.append(p.rout.remove())
-
-
-class GraphInterface:
+class DiGraph:
     def __init__(self) -> None:
         self.nodes = {}
         self.edges = {}
         self.mc = 0
 
-    def add_node(self, node):
+    def add_node(self, id, pos: tuple = None):
+        node = Node(id, pos)
+
         self.nodes[node.key] = node
         self.edges[node.key] = {}
         self.mc +=1
@@ -115,7 +68,81 @@ class GraphInterface:
         return self.edges[id]
 
     def all_in_edges_of_node(self, id):
-        return {src : src[id] for src in self.edges if id in src}
+        return {src : id for src in self.edges.keys() if id in self.edges[src]}
 
     def get_mc(self):
         return self.mc
+
+
+class TagHeap:
+
+    def __init__(self, size, G: DiGraph):
+        self.graph = G
+        self.min = -1
+        self.values = [math.inf] * size
+
+    def getMin(self):
+        if self.min == -1:
+            return None
+        else:
+            return self.values[self.min]
+
+    def get(self, ind):
+        return self.values[ind]
+
+    def relax(self, val, ind):
+
+        if self.values[ind] > val:
+            self.values[ind] = val
+
+            if val < self.getMin():
+                self.min = val
+
+            return True
+
+        return False
+
+    def updateChosen(self, id):
+        self.graph.nodes[id].tag = 1
+        if self.min == id:
+
+            Min = math.inf
+            ind = -1
+            for i in range(len(self.values)):
+                if self.values[i] <= Min:
+                    if self.graph.nodes[i].tag is 0:
+                        Min = self.values[i]
+                        ind = i
+
+            self.min = ind
+
+
+class Path:
+    def __init__(self, G: DiGraph):
+        self.graph = G
+        self.rout = []
+        self.weight = 0
+
+    def getLeangth(self):
+        return len(self.rout)
+
+    def add(self, nod):
+        self.rout.insert(0, nod)
+        self.updateWeight()
+
+    def updateWeight(self):
+        l = len(self.rout)
+
+        if l > 1:
+            self.weight += self.graph.edges[l-2][l-1]
+
+    def remove(self, last):
+        if last:
+            t = self.rout.pop(self.getLeangth() - 1)
+        else:
+            t = self.rout.pop(0)
+
+        self.weight -= t.weight
+
+    def merge(self, p):
+        self.rout += p
