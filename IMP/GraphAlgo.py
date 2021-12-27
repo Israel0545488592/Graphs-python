@@ -87,9 +87,6 @@ class GraphAlgo:
         if not (self.graph.nodes[src] and self.graph.nodes[dst]):
             return None
 
-        if src == dst:
-            return Path()
-
         self.clearTags()
 
         prevs = [node.key for node in self.graph.nodes.values()]
@@ -101,12 +98,13 @@ class GraphAlgo:
         while not finished:
             edges = self.graph.edges[dists.min]
 
-            change = False
             curr = dists.min
+            change = False
             for edge in edges.keys():
-                change = change or dists.relax(dists.get(curr) + edges[edge], edge)
+                relaxed = dists.relax(dists.get(curr) + edges[edge], edge)
+                change = change or relaxed
 
-                if change:
+                if relaxed:
                     prevs[edge] = curr
 
             dists.update_chosen(curr)
@@ -119,6 +117,11 @@ class GraphAlgo:
         if dists.get(dst) == math.inf:
             return None
 
+        if src == dst:
+            path = Path(self.graph)
+            path.add(src)
+            return path, dists.values
+
         path = Path(self.graph)
         curr = dst
         while curr is not src:
@@ -126,7 +129,7 @@ class GraphAlgo:
             curr = prevs[curr]
         path.add(src)
 
-        return path, dists
+        return path, dists.values
 
     def shortest_path(self, src, dst):
         path, dists = self.dijkstra(src, dst)
@@ -137,7 +140,7 @@ class GraphAlgo:
         if self.graph.v_size() == 0:
             return None
 
-        ind = self.ArbitraryNode().key
+        ind = self.graph.nodes[self.ArbitraryNode()].key
         minMax = math.inf
 
         if not self.isConnected():
@@ -146,14 +149,14 @@ class GraphAlgo:
         it = self.graph.get_all_v().keys()
         for node in it:
 
-            path, dists = self.dijkstra()
+            path, dists = self.dijkstra(node, node)
             Max = max(dists)
 
             if Max < minMax:
                 minMax = Max
                 ind = node
 
-        return tuple(ind, minMax)
+        return ind, minMax
 
     def TSP(self, destinations):
         if len(destinations) < 2:
@@ -169,13 +172,13 @@ class GraphAlgo:
                 path, dists = self.dijkstra(destinations[perm[i]], destinations[perm[i + 1]])
 
                 if path is not None and dists is not math.inf:
-                    rout.remove(last = True)
+                    rout.remove(last=True)
                     rout.merge(path)
                 else:
                     possible = False
                     break
 
-                i +=2
+                i += 2
 
         if possible:
             return tuple(rout.rout, rout.weight)

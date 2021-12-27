@@ -58,8 +58,8 @@ def check1():
     print(g_algo.shortest_path(0, 3))
     print(g_algo.shortest_path(3, 1))
     print(g_algo.centerPoint())
-    g_algo.save_to_json(file + '_saved')
-    g_algo.plot_graph()
+#    g_algo.save_to_json(file + '_saved')
+#    g_algo.plot_graph()
 
 
 def check2():

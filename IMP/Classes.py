@@ -99,7 +99,10 @@ class TagHeap:
             self.values[ind] = val
 
             if val < self.get_min():
-                self.min = val
+                if self.graph.nodes[ind].tag == 0:
+                    self.min = ind
+                else:
+                    self.updateMin()
 
             return True
 
@@ -108,16 +111,19 @@ class TagHeap:
     def update_chosen(self, id):
         self.graph.nodes[id].tag = 1
         if self.min == id:
+            self.updateMin()
 
-            Min = math.inf
-            ind = -1
-            for i in range(len(self.values)):
-                if self.values[i] <= Min:
-                    if self.graph.nodes[i].tag == 0:
-                        Min = self.values[i]
-                        ind = i
+    def updateMin(self):
+        Min = math.inf
+        ind = -1
 
-            self.min = ind
+        for i in range(len(self.values)):
+            if self.values[i] <= Min:
+                if self.graph.nodes[i].tag == 0:
+                    Min = self.values[i]
+                    ind = i
+
+        self.min = ind
 
 
 class Path:
@@ -140,15 +146,25 @@ class Path:
             self.weight += self.graph.edges[1][0]
 
     def remove(self, last):
+        if len(self.rout) == 1:
+            return self.rout.pop(0)
+        if len(self.rout) == 0:
+            print("Empty Rout !!!")
+            return None
+
         if last:
+            l = self.get_length()
+            w = self.graph.edges[l - 2][l - 1]
+
             t = self.rout.pop(self.get_length() - 1)
         else:
+            w = self.graph.edges[0][1]
             t = self.rout.pop(0)
 
-        self.weight -= t.weight
+        self.weight -= w
 
     def merge(self, p):
-        self.weight += self.graph.edges[self.rout[self.get_length() -1]][p.rout[0]]
+        self.weight += self.graph.edges[self.rout[self.get_length() - 1]][p.rout[0]]
         self.rout += p.rout
         self.weight += p.weight
 
