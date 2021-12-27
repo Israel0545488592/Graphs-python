@@ -27,8 +27,8 @@ class TestPath(TestCase):
         self.p.add(1)
         self.assertEqual(2, self.p.get_length())
         self.assertEqual(1, self.p.weight)
-        # self.p.remove(0)
-        # self.assertEqual(0, self.p.weight)
+        self.p.remove(True)     # remove last node -> 1
+        self.assertEqual(0, self.p.weight)
 
     def test_merge(self):
         self.p.add(1)
@@ -38,7 +38,7 @@ class TestPath(TestCase):
         p2.add(2)
         self.p.merge(p2)
         self.assertEqual(4, self.p.get_length())
-        self.assertEqual(3, self.p.weight)  # maybe doesn't count weight in between??
+        self.assertEqual(3, self.p.weight)
 
 
 if __name__ == '__main__':

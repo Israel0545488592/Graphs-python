@@ -1,6 +1,7 @@
 import json
 import math
 
+from API.GraphAlgoInterface import GraphAlgoInterface
 from IMP.Classes import DiGraph, Path, TagHeap
 
 
@@ -14,7 +15,7 @@ def permutator(elements):
                 yield perm[:i] + elements[0:1] + perm[i:]
 
 
-class GraphAlgo:
+class GraphAlgo(GraphAlgoInterface):
 
     def __init__(self, G: DiGraph = DiGraph()):
         self.graph = G
@@ -196,4 +197,11 @@ class GraphAlgo:
             if possible:
                 return rout.rout, rout.weight
 
+
         return None, None
+
+        if possible:
+            return rout.rout, rout.weight
+
+    def plot_graph(self) -> None:
+        pass
