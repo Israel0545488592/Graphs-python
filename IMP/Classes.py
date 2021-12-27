@@ -60,7 +60,7 @@ class DiGraph:
 
     def e_size(self):
         sum = 0
-        for dsts in self.edges:
+        for dsts in self.edges.values():
             sum += len(dsts)
         return sum
 
@@ -113,7 +113,7 @@ class TagHeap:
             ind = -1
             for i in range(len(self.values)):
                 if self.values[i] <= Min:
-                    if self.graph.nodes[i].tag is 0:
+                    if self.graph.nodes[i].tag == 0:
                         Min = self.values[i]
                         ind = i
 
