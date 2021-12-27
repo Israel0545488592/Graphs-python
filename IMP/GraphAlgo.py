@@ -118,7 +118,7 @@ class GraphAlgo:
                 finished = True
 
         if dists.get(dst) == math.inf:
-            return None
+            return None, None
 
         if src == dst:
             path = Path(self.graph)
@@ -136,7 +136,11 @@ class GraphAlgo:
 
     def shortest_path(self, src, dst):
         path, dists = self.dijkstra(src, dst)
-        return dists, path
+
+        if path is None:
+            return None, None
+
+        return path.weight, path.rout
 
     def centerPoint(self):
 
@@ -165,23 +169,31 @@ class GraphAlgo:
         if len(destinations) < 2:
             return destinations
 
+        rout = Path(self.graph)
+
         # trying all possible options before giving up
-        rout = Path()
-        possible = True
         for perm in permutator(list(range(len(destinations)))):
 
-            i = 0
-            while i < len(perm) + 1:
-                path, dists = self.dijkstra(destinations[perm[i]], destinations[perm[i + 1]])
+            destinationShuffeled = [destinations[i] for i in perm]
+            possible = True
 
-                if path is not None and dists is not math.inf:
+            while len(destinationShuffeled) > 0:
+                path, dists = self.dijkstra(destinationShuffeled[0], destinationShuffeled[1])
+
+                if path is not None and path.weight is not math.inf:
                     rout.remove(last=True)
                     rout.merge(path)
                 else:
                     possible = False
                     break
 
-                i += 2
+                dst = rout.getLast()
+                destinationShuffeled = [i for i in destinationShuffeled if i not in path.rout]
+                if len(destinationShuffeled) == 0:
+                    break
+                destinationShuffeled.insert(0, dst)
 
-        if possible:
-            return tuple(rout.rout, rout.weight)
+            if possible:
+                return rout.rout, rout.weight
+
+        return None, None

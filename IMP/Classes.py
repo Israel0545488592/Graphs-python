@@ -147,6 +147,7 @@ class Path:
 
     def remove(self, last):
         if len(self.rout) == 1:
+            self.weight = 0
             return self.rout.pop(0)
         if len(self.rout) == 0:
             print("Empty Rout !!!")
@@ -165,9 +166,21 @@ class Path:
         return t
 
     def merge(self, p):
+        if p.get_length() is 0:
+            return
+        if self.get_length() is 0:
+            self.rout = p.rout
+            return
+
         self.weight += self.graph.edges[self.rout[self.get_length() - 1]][p.rout[0]]
         self.rout += p.rout
         self.weight += p.weight
+
+    def getLast(self):
+        if self.get_length() is 0:
+            return None
+
+        return self.rout[self.get_length() -1]
 
     def __repr__(self):
         return self.rout.__repr__()
