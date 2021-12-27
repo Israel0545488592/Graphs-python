@@ -47,7 +47,7 @@ class GraphAlgo:
             edges = self.graph.edges[node.key]
 
             for dst in edges.keys():
-                g.add_edge(node.key, dst, edges[dst])
+                g.add_edge(dst, node.key, edges[dst])
 
         return GraphAlgo(g)
 

@@ -31,14 +31,14 @@ class TestPath(TestCase):
         # self.assertEqual(0, self.p.weight)
 
     def test_merge(self):
-        self.p.add(0)
         self.p.add(1)
+        self.p.add(0)
         p2 = Path(self.dg)
-        p2.add(2)
         p2.add(3)
+        p2.add(2)
         self.p.merge(p2)
         self.assertEqual(4, self.p.get_length())
-        self.assertEqual(2, self.p.weight)  # maybe doesn't count weight in between??
+        self.assertEqual(3, self.p.weight)  # maybe doesn't count weight in between??
 
 
 if __name__ == '__main__':

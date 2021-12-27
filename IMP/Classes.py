@@ -148,8 +148,9 @@ class Path:
         self.weight -= t.weight
 
     def merge(self, p):
+        self.weight += self.graph.edges[self.rout[self.get_length() -1]][p.rout[0]]
         self.rout += p.rout
-        self.update_weight()
+        self.weight += p.weight
 
     def __repr__(self):
         return self.rout.__repr__()
