@@ -107,7 +107,7 @@ class GraphAlgo:
                 if change:
                     prevs[edge] = curr
 
-            dists.updateChosen(curr)
+            dists.update_chosen(curr)
             if dists.min == -1:
                 break
 

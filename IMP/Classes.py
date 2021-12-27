@@ -79,12 +79,12 @@ class DiGraph:
 
 class TagHeap:
 
-    def __init__(self, size, G: DiGraph):
-        self.graph = G
+    def __init__(self, size, g: DiGraph):
+        self.graph = g
         self.min = -1
         self.values = [math.inf] * size
 
-    def getMin(self):
+    def get_min(self):
         if self.min == -1:
             return None
         else:
@@ -98,14 +98,14 @@ class TagHeap:
         if self.values[ind] > val:
             self.values[ind] = val
 
-            if val < self.getMin():
+            if val < self.get_min():
                 self.min = val
 
             return True
 
         return False
 
-    def updateChosen(self, id):
+    def update_chosen(self, id):
         self.graph.nodes[id].tag = 1
         if self.min == id:
 
@@ -121,19 +121,19 @@ class TagHeap:
 
 
 class Path:
-    def __init__(self, G: DiGraph):
-        self.graph = G
+    def __init__(self, g: DiGraph):
+        self.graph = g
         self.rout = []
         self.weight = 0
 
-    def getLeangth(self):
+    def get_length(self):
         return len(self.rout)
 
     def add(self, nod):
         self.rout.insert(0, nod)
-        self.updateWeight()
+        self.update_weight()
 
-    def updateWeight(self):
+    def update_weight(self):
         l = len(self.rout)
 
         if l > 1:
@@ -141,11 +141,12 @@ class Path:
 
     def remove(self, last):
         if last:
-            t = self.rout.pop(self.getLeangth() - 1)
+            t = self.rout.pop(self.get_length() - 1)
         else:
             t = self.rout.pop(0)
 
         self.weight -= t.weight
 
     def merge(self, p):
-        self.rout += p
+        self.rout += p.rout
+        self.update_weight()
