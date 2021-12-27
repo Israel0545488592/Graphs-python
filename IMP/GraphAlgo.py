@@ -16,7 +16,7 @@ def permutator(elements):
 
 class GraphAlgo:
 
-    def __init__(self, G: DiGraph):
+    def __init__(self, G: DiGraph = DiGraph()):
         self.graph = G
 
     def save_to_json(self, file):
@@ -29,13 +29,11 @@ class GraphAlgo:
         with open(file, "r") as f:
             dict = json.load(f)
 
-        for n in dict["nodes"].values():
-            self.graph.add_node(n["id"], (n['pos']['x'], n['pos']['y']))
+        for n in dict["Nodes"]:
+            self.graph.add_node(int(n['id']), tuple(map(lambda x: float(x), n['pos'].split(','))))
 
-        for src, out in dict["edges"].items():
-            for dest, w in out.items():
-                print(src, dest, w)
-                self.graph.add_edge(int(src), int(dest), w)
+        for e in dict["Edges"]:
+            self.graph.add_edge(int(e['src']), int(e['dest']), float(e['w']))
 
     def isConnected(self):
         return self.DFS() and self.transpose().DFS()
@@ -43,13 +41,15 @@ class GraphAlgo:
     def transpose(self):
         g = DiGraph()
 
-        for node in self.graph.nodes:
-            g.add_node(node)
+        for node in self.graph.nodes.values():
+            g.add_node(node.key, node.loc)
 
             edges = self.graph.edges[node.key]
 
             for dst in edges.keys():
                 g.add_edge(node.key, dst, edges[dst])
+
+        return GraphAlgo(g)
 
     def clearTags(self):
         for node in self.graph.nodes.values():
@@ -65,19 +65,21 @@ class GraphAlgo:
 
         self.clearTags()
 
-        stack = self.ArbitraryNode()
+        stack = [self.ArbitraryNode()]
         nodesReached = 0
 
         while len(stack) > 0:
-            node = stack.pop(0)
+            node = self.graph.nodes[stack.pop(0)]
             nodesReached += 1
 
-            if node.tag != 1:
+            if node.tag != 2:
                 edges = self.graph.edges[node.key]
-                for edge in edges.keys:
-                    stack.insert(0, self.graph.nodes[edge])
+                for dst in edges.keys():
+                    if self.graph.nodes[dst].tag == 0:
+                        stack.insert(0, dst)
+                        self.graph.nodes[dst].tag = 1
 
-            node.tag = 1
+            node.tag = 2
 
         return nodesReached == self.graph.v_size()
 

@@ -137,7 +137,7 @@ class Path:
         l = len(self.rout)
 
         if l > 1:
-            self.weight += self.graph.edges[l - 2][l - 1]
+            self.weight += self.graph.edges[1][0]
 
     def remove(self, last):
         if last:
@@ -149,3 +149,6 @@ class Path:
 
     def merge(self, p):
         self.rout += p
+
+    def __repr__(self):
+        return self.rout.__repr__()

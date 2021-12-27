@@ -18,8 +18,8 @@ def check():
     (7, 6.806805834715163)
     ([1,3,4,2],3.5)
     """
-    check0()
-#    check1()
+#    check0()
+    check1()
 #    check2()
 
 
@@ -53,7 +53,7 @@ def check1():
     :return:
     """
     g_algo = GraphAlgo()  # init an empty graph - for the GraphAlgo
-    file = "../data/T0.json"
+    file = "C:/Users/Israel/computer sience/OOP/Assignments/Ex3/Data/A0.json"
     g_algo.load_from_json(file)  # init a GraphAlgo from a json file
     print(g_algo.shortest_path(0, 3))
     print(g_algo.shortest_path(3, 1))
