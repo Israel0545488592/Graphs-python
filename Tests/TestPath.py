@@ -39,3 +39,7 @@ class TestPath(TestCase):
         self.p.merge(p2)
         self.assertEqual(4, self.p.get_length())
         self.assertEqual(2, self.p.weight)  # maybe doesn't count weight in between??
+
+
+if __name__ == '__main__':
+    TestCase.main()
