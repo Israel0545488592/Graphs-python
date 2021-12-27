@@ -7,10 +7,13 @@ def ListToDict(lst):
 
 
 class Node:
-    def __init__(self, id, loc : tuple):
+    def __init__(self, id, loc: tuple):
         self.key = id
         self.tag = 0
         self.loc = loc
+
+    def __repr__(self):
+        return "id: " + str(self.key) + ", loc: " + str(self.loc)
 
 
 class DiGraph:
@@ -24,7 +27,7 @@ class DiGraph:
 
         self.nodes[node.key] = node
         self.edges[node.key] = {}
-        self.mc +=1
+        self.mc += 1
 
     def add_edge(self, src, dest, w):
         if src in self.nodes.keys() and dest in self.nodes.keys():
@@ -35,7 +38,7 @@ class DiGraph:
         if id in self.nodes.keys():
             self.nodes.pop(id)
             self.edges.pop(id)
-            self.mc +=1
+            self.mc += 1
             return True
 
         return False
@@ -44,7 +47,7 @@ class DiGraph:
         if src in self.edges:
             if dst in self.edges[src]:
                 self.edges[src].pop(dst)
-                self.mc +=1
+                self.mc += 1
                 return True
 
         return False
@@ -68,7 +71,7 @@ class DiGraph:
         return self.edges[id]
 
     def all_in_edges_of_node(self, id):
-        return {src : id for src in self.edges.keys() if id in self.edges[src]}
+        return {src: id for src in self.edges.keys() if id in self.edges[src]}
 
     def get_mc(self):
         return self.mc
@@ -134,7 +137,7 @@ class Path:
         l = len(self.rout)
 
         if l > 1:
-            self.weight += self.graph.edges[l-2][l-1]
+            self.weight += self.graph.edges[l - 2][l - 1]
 
     def remove(self, last):
         if last:
