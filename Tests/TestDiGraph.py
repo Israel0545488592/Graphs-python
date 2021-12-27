@@ -62,3 +62,7 @@ class TestDiGraph(TestCase):
 
     def test_all_in_edges_of_node(self):
         self.fail()
+
+
+# if __name__ == '__main__':
+#     TestCase.main()
