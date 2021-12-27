@@ -19,6 +19,9 @@ class GraphAlgo:
     def __init__(self, G: DiGraph = DiGraph()):
         self.graph = G
 
+    def get_graph(self):
+        return self.graph
+
     def save_to_json(self, file):
         with open(file, 'w') as f:
             json.dump(self.graph, indent=2, fp=f, default=lambda a: a.__dict__)
@@ -133,7 +136,7 @@ class GraphAlgo:
 
     def shortest_path(self, src, dst):
         path, dists = self.dijkstra(src, dst)
-        return path
+        return dists, path
 
     def centerPoint(self):
 
