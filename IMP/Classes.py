@@ -1,5 +1,7 @@
 import math
 
+from API.GraphInterface import GraphInterface
+
 
 def ListToDict(lst):
     res_dct = {lst[i]: lst[i + 1] for i in range(0, len(lst), 2)}
@@ -16,7 +18,7 @@ class Node:
         return "id: " + str(self.key) + ", loc: " + str(self.loc)
 
 
-class DiGraph:
+class DiGraph(GraphInterface):
     def __init__(self) -> None:
         self.nodes = {}
         self.edges = {}
@@ -102,7 +104,7 @@ class TagHeap:
                 if self.graph.nodes[ind].tag == 0:
                     self.min = ind
                 else:
-                    self.updateMin()
+                    self.update_min()
 
             return True
 
@@ -111,9 +113,9 @@ class TagHeap:
     def update_chosen(self, id):
         self.graph.nodes[id].tag = 1
         if self.min == id:
-            self.updateMin()
+            self.update_min()
 
-    def updateMin(self):
+    def update_min(self):
         Min = math.inf
         ind = -1
 
@@ -135,16 +137,20 @@ class Path:
     def get_length(self):
         return len(self.rout)
 
+    # adds node at the beginning of rout
     def add(self, nod):
         self.rout.insert(0, nod)
         self.update_weight()
 
+    # update weight with the last node
     def update_weight(self):
         l = len(self.rout)
 
         if l > 1:
             self.weight += self.graph.edges[1][0]
 
+    # removes the last node if last == true
+    # else removes the first node
     def remove(self, last):
         if len(self.rout) == 1:
             return self.rout.pop(0)
@@ -163,6 +169,7 @@ class Path:
 
         self.weight -= w
 
+    # merges path p into this path
     def merge(self, p):
         self.weight += self.graph.edges[self.rout[self.get_length() - 1]][p.rout[0]]
         self.rout += p.rout
