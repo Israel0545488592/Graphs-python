@@ -71,7 +71,7 @@ Used for finding the graph's center that would exist only when it is connected.
  
  
  
- 
+ ![Figure_1.png](Figure_1.png)
 
 
 
