@@ -55,14 +55,43 @@ class TestDiGraph(TestCase):
         self.fail()
 
     def test_get_all_v(self):
-        self.fail()
+        v = str(self.dg.get_all_v())
+        ans = "{}"
+        self.assertEqual(ans, v)
+        self.dg.add_node(0, (1, 1))
+        self.dg.add_node(1, (2, 1))
+        v = str(self.dg.get_all_v())
+        ans = "{0: id: 0, loc: (1, 1), 1: id: 1, loc: (2, 1)}"
+        self.assertEqual(ans, v)
 
     def test_all_out_edges_of_node(self):
-        self.fail()
+        self.dg.add_node(0, (1, 1))
+        self.dg.add_node(1, (2, 1))
+        v = str(self.dg.all_out_edges_of_node(0))
+        ans = "{}"
+        self.assertEqual(ans, v)
+        self.dg.add_edge(0, 1, 2)
+        self.dg.add_edge(1, 0, 3)
+        v = str(self.dg.all_out_edges_of_node(0))
+        ans = "{1: 2}"
+        self.assertEqual(ans, v)
 
     def test_all_in_edges_of_node(self):
-        self.fail()
-
+        self.dg.add_node(0, (1, 1))
+        self.dg.add_node(1, (2, 1))
+        v = str(self.dg.all_in_edges_of_node(0))
+        ans = "{}"
+        self.assertEqual(ans, v)
+        self.dg.add_edge(0, 1, 2)
+        self.dg.add_edge(1, 0, 3)
+        v = str(self.dg.all_in_edges_of_node(0))
+        ans = "{1: 3}"
+        self.assertEqual(ans, v)
+        self.dg.add_node(2, (3, 1))
+        self.dg.add_edge(2, 0, 5)
+        v = str(self.dg.all_in_edges_of_node(0))
+        ans = "{1: 3, 2: 5}"
+        self.assertEqual(ans, v)
 
 # if __name__ == '__main__':
 #     TestCase.main()

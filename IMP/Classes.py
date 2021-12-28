@@ -73,7 +73,7 @@ class DiGraph(GraphInterface):
         return self.edges[id]
 
     def all_in_edges_of_node(self, id):
-        return {src: id for src in self.edges.keys() if id in self.edges[src]}
+        return {src: self.edges[src][id] for src in self.edges.keys() if id in self.edges[src]}
 
     def get_mc(self):
         return self.mc
