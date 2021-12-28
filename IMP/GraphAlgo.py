@@ -99,7 +99,7 @@ class GraphAlgo(GraphAlgoInterface):
         dists.values[src] = 0
         finished = False
 
-        while not finished:
+        while True:  # while heap isn't empty( a note for farther updates)
             edges = self.graph.edges[dists.min]
 
             curr = dists.min
@@ -115,8 +115,6 @@ class GraphAlgo(GraphAlgoInterface):
             if dists.min == -1:
                 break
 
-            if not change:
-                finished = True
 
         if dists.get(dst) == math.inf:
             return None, None
@@ -139,7 +137,7 @@ class GraphAlgo(GraphAlgoInterface):
         path, dists = self.dijkstra(src, dst)
 
         if path is None:
-            return None, None
+            return math.inf, None
 
         return path.weight, path.rout
 
@@ -152,7 +150,7 @@ class GraphAlgo(GraphAlgoInterface):
         minMax = math.inf
 
         if not self.isConnected():
-            return tuple(ind, minMax)
+            return ind, minMax
 
         it = self.graph.get_all_v().keys()
         for node in it:

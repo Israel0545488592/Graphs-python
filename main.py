@@ -20,7 +20,8 @@ def check():
     """
 #    check0()
 #    check1()
-    check2()
+#    check2()
+    check3()
 
 
 def check0():
@@ -70,15 +71,15 @@ def check2():
     file = "C:/Users/Israel/computer sience/OOP/Assignments/Ex3/Data/A5"
     g_algo.load_from_json(file + '.json')
     g_algo.get_graph().remove_edge(13, 14)
-#    g_algo.save_to_json(file + "_edited.json")
-#    dist, path = g_algo.shortest_path(1, 7)
-#    print(dist, path)
-#    dist, path = g_algo.shortest_path(47, 19)
-#    print(dist, path)
-#    dist, path = g_algo.shortest_path(20, 2)
-#    print(dist, path)
-#    dist, path = g_algo.shortest_path(2, 20)
-#    print(dist, path)
+    g_algo.save_to_json(file + "_edited.json")
+    dist, path = g_algo.shortest_path(1, 7)
+    print(dist, path)
+    dist, path = g_algo.shortest_path(47, 19)
+    print(dist, path)
+    dist, path = g_algo.shortest_path(20, 2)
+    print(dist, path)
+    dist, path = g_algo.shortest_path(2, 20)
+    print(dist, path)
     print(g_algo.TSP([1, 2, 3]))
 #    g_algo.plot_graph()
 
@@ -101,7 +102,7 @@ def check3():
     g_algo = GraphAlgo(g)
     print(g_algo.centerPoint())
     print(g_algo.TSP([1, 2, 4]))
-    g_algo.plot_graph()
+#    g_algo.plot_graph()
 
 
 if __name__ == '__main__':
