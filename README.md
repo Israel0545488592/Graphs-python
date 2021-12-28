@@ -1,5 +1,9 @@
 # OOP_Ex3
 
+![github-small](https://github.com/Israel0545488592/OOP_Ex3/blob/master/GUI/Figure_1.png)
+
+
+
 The main idea of the implementation is to use python dictionary as hashMap
 
 The graph implementation is under classes.py.
@@ -67,16 +71,3 @@ Transpose - transposes the graph, flips the edges "inside-out".
 
 isConnected - returns whether a graph is strongly connected, using DFS and transpose as mentioned above.
 Used for finding the graph's center that would exist only when it is connected.
- 
- 
- 
- 
- ![Figure_1.png](Figure_1.png)
-
-
-
-
-
-
-
-
