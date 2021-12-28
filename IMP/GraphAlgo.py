@@ -28,16 +28,36 @@ class GraphAlgo(GraphAlgoInterface):
             json.dump(self.graph, indent=2, fp=f, default=lambda a: a.__dict__)
 
     def load_from_json(self, file):
+        self.graph = DiGraph()
         dict = {}
 
-        with open(file, "r") as f:
-            dict = json.load(f)
+        try:
+            with open(file, "r") as f:
+                dict = json.load(f)
 
-        for n in dict["Nodes"]:
-            self.graph.add_node(int(n['id']), tuple(map(lambda x: float(x), n['pos'].split(','))))
+            for n in dict["Nodes"]:
+                self.graph.add_node(int(n['id']), tuple(map(lambda x: float(x), n['pos'].split(','))))
 
-        for e in dict["Edges"]:
-            self.graph.add_edge(int(e['src']), int(e['dest']), float(e['w']))
+            for e in dict["Edges"]:
+                self.graph.add_edge(int(e['src']), int(e['dest']), float(e['w']))
+        except:
+            pass
+
+        try:
+            with open(file, "r") as f:
+                dict = json.load(f)
+
+            nodes = dict["nodes"]
+            for n in nodes.keys():
+                self.graph.add_node(int(nodes[n]['key']), tuple(nodes[n]['loc']))
+
+            edges = dict["edges"]
+            for dests in edges.keys():
+                self.graph.edges[int(dests)] = {int(dst) : float(edges[dests][dst]) for dst in edges[dests].keys()}
+
+        except:
+            print("unfamiliar format")
+
 
     def isConnected(self):
         return self.DFS() and self.transpose().DFS()
@@ -114,7 +134,6 @@ class GraphAlgo(GraphAlgoInterface):
             dists.update_chosen(curr)
             if dists.min == -1:
                 break
-
 
         if dists.get(dst) == math.inf:
             return None, None
@@ -195,11 +214,7 @@ class GraphAlgo(GraphAlgoInterface):
             if possible:
                 return rout.rout, rout.weight
 
-
         return None, None
-
-        if possible:
-            return rout.rout, rout.weight
 
     def plot_graph(self) -> None:
         import matplotlib.pyplot as plt
@@ -223,6 +238,6 @@ class GraphAlgo(GraphAlgoInterface):
                 dy = node.loc[1] - y
 
                 plt.arrow(x, y, dx, dy, width=0.00005, shape='full', color='g', length_includes_head=True)
-                plt.annotate(str(G.edges[src][dst]), (x, y), (x + dx / 2, y + dy / 2), fontsize=4)
+                plt.annotate(str(G.edges[src][dst]), (x, y), (x + 0.7 * dx, y + 0.7 * dy), fontsize=4)
 
         plt.show()
