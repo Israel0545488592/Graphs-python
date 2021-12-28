@@ -223,5 +223,6 @@ class GraphAlgo(GraphAlgoInterface):
                 dy = node.loc[1] - y
 
                 plt.arrow(x, y, dx, dy, width=0.00005, shape='full', color='g', length_includes_head=True)
+                plt.annotate(str(G.edges[src][dst]), (x, y), (x + dx / 2, y + dy / 2), fontsize=4)
 
         plt.show()
