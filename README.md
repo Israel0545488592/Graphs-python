@@ -37,11 +37,11 @@ remove(last)| removes the last node from the route whenever last is true, otherw
 merge(p)| merges and connects path p into the current path
 
 ### TagHeap
-An assist structure to hold a graph in a form of heap when implementing path-related algorithms (such as shortest path and TSP) 
+An assist structure to hold temperry information fore ShortesPath method
 
 Field|Description
 --- | --- |
-Graph| Holds the graph the heap will hold
+Graph| Holds the graph to allow access to the weights of the edges and tags of the nodes
 min| An id of the node that holds the minimal weight value
 values| a list holds the weight of a node in relation to a path
 
