@@ -36,3 +36,8 @@ Transpose - transposes the graph, flips the edges "inside-out".
 
 isConnected - returns whether a graph is strongly connected, using DFS and transpose as mentioned above.
 Used for finding the graph's center that would exist only when it is connected.
+
+## Motivation
+The purpose of the assignment is to make a comparison between programming languages unto a similar projects
+In this assignment we implemented a much more efficient structure compared to previous one. 
+More detail can be found in our wiki.
