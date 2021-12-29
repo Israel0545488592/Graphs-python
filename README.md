@@ -38,6 +38,7 @@ isConnected - returns whether a graph is strongly connected, using DFS and trans
 Used for finding the graph's center that would exist only when it is connected.
 
 ## Motivation
-The purpose of the assignment is to make a comparison between programming languages unto a similar projects
+The purpose of the assignment is to make a comparison between programming languages unto a similar projects.
+
 In this assignment we implemented a much more efficient structure compared to previous one. 
 More detail can be found in our wiki.
